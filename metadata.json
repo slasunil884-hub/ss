@@ -1,0 +1,6 @@
+{
+  "name": "Shadow Supporter",
+  "description": "Shadow Supporter (SS) bilingual AI command centre with Arduino Studio, Grades 1-13 Study Hub, and dedicated Music Room.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
