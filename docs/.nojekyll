@@ -1,0 +1,111 @@
+const langCycle = ["EN", "SI", "SG"];
+const langLabel = {
+  EN: "English",
+  SI: "Sinhala",
+  SG: "Singlish"
+};
+
+const chatWindow = document.getElementById("chatWindow");
+const chatInput = document.getElementById("chatInput");
+const sendBtn = document.getElementById("sendBtn");
+const langToggle = document.getElementById("langToggle");
+
+function appendMessage(role, text) {
+  const row = document.createElement("div");
+  row.className = `chat-msg ${role === "USER" ? "user" : "system"}`;
+
+  const tag = document.createElement("span");
+  tag.className = "role";
+  tag.textContent = role === "USER" ? "[YOU]" : "[RAVI]";
+
+  const content = document.createElement("span");
+  content.textContent = text;
+
+  row.append(tag, content);
+  chatWindow.appendChild(row);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+function processUserInput(value) {
+  const text = value.trim();
+  if (!text) return;
+
+  appendMessage("USER", text);
+  chatInput.value = "";
+
+  const lower = text.toLowerCase();
+
+  if (lower.includes("photosynthesis")) {
+    appendMessage("RAVI", "Photosynthesis converts carbon dioxide and water into glucose using sunlight, releasing oxygen as a by-product.");
+    return;
+  }
+
+  if (lower.includes("arduino") || lower.includes("robot")) {
+    appendMessage("RAVI", "I can generate a working Arduino sketch for sensors, LEDs, motors, or ESP32 automation. Give me the exact components and pin layout.");
+    return;
+  }
+
+  if (lower.includes("study") || lower.includes("exam") || lower.includes("quiz")) {
+    appendMessage("RAVI", "Let’s build a quick study sprint: 15 minutes for recall, 10 minutes for formulas, 10 minutes for active quiz review. I can make a custom revision plan for Grade 10 or A/L subjects.");
+    return;
+  }
+
+  if (lower.includes("music") || lower.includes("focus")) {
+    appendMessage("RAVI", "Focus mode is active. I recommend a low-distraction synthwave or instrumental loop with a 25-minute timer and a clean work block.");
+    return;
+  }
+
+  appendMessage("RAVI", `Command received: "${text}". RAVI is syncing your hero system with the right module and preparing the next best action.`);
+}
+
+sendBtn.addEventListener("click", () => processUserInput(chatInput.value));
+chatInput.addEventListener("keydown", (event) => {
+  if (event.key === "Enter") processUserInput(chatInput.value);
+});
+
+for (const prompt of document.querySelectorAll(".prompt-btn")) {
+  prompt.addEventListener("click", () => {
+    const text = prompt.textContent;
+    chatInput.value = text;
+    processUserInput(text);
+  });
+}
+
+for (const nav of document.querySelectorAll(".nav-pill")) {
+  nav.addEventListener("click", () => {
+    document.querySelectorAll(".nav-pill").forEach((btn) => btn.classList.remove("active"));
+    nav.classList.add("active");
+
+    const target = nav.dataset.target;
+    const id = target === "home" ? "home" : target;
+    const anchor = document.getElementById(id);
+    if (anchor) {
+      anchor.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+}
+
+let langIndex = 0;
+langToggle.addEventListener("click", () => {
+  langIndex = (langIndex + 1) % langCycle.length;
+  const next = langCycle[langIndex];
+  langToggle.textContent = next;
+  langToggle.title = langLabel[next];
+
+  const label = langLabel[next];
+  document.title = `Shadow Supporter | ${label} RAVI Core`;
+
+  const systemLabel = document.querySelector(".status-indicator");
+  if (systemLabel) {
+    systemLabel.lastChild.textContent = next === "EN" ? " ONLINE" : ` ${label.toUpperCase()} MODE`;
+  }
+});
+
+const primaryBtn = document.querySelector(".primary-btn");
+if (primaryBtn) {
+  primaryBtn.addEventListener("click", () => {
+    const welcome = "RAVI system activated. All hero modules are ready.";
+    appendMessage("RAVI", welcome);
+    chatInput.focus();
+  });
+}

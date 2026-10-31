@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shadow Supporter | RAVI Core</title>
+    <meta
+      name="description"
+      content="Shadow Supporter is a futuristic bilingual command center built for study, code, music, and AI assistance."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="bg-grid"></div>
+    <div class="noise"></div>
+
+    <header class="topbar wrap">
+      <div class="brand-wrap">
+        <div class="brand-mark">SS</div>
+        <div>
+          <div class="brand-name">SHADOW SUPPORTER</div>
+          <div class="brand-sub">RAVI CORE // Global Intelligence</div>
+        </div>
+      </div>
+
+      <nav class="main-nav" aria-label="Main navigation">
+        <button class="nav-pill active" data-target="home">HOME</button>
+        <button class="nav-pill" data-target="chat">CHAT</button>
+        <button class="nav-pill" data-target="music">MUSIC</button>
+        <button class="nav-pill" data-target="study">STUDY</button>
+        <button class="nav-pill" data-target="robotics">ROBOTICS</button>
+      </nav>
+
+      <div class="topbar-actions">
+        <button id="langToggle" class="lang-chip" aria-label="Toggle language">EN</button>
+        <div class="status-indicator">
+          <span class="dot"></span>
+          ONLINE
+        </div>
+      </div>
+    </header>
+
+    <main class="wrap page-shell">
+      <section class="hero" id="home">
+        <div class="hero-copy">
+          <p class="eyebrow">UNIFIED COMMAND CORE</p>
+          <h1>
+            Your personal AI co-pilot for
+            <span class="gradient-text">study, music, robotics, and hero mode.</span>
+          </h1>
+          <p class="lede">
+            RAVI turns your everyday flow into a cyber command experience — bilingual, adaptive,
+            and ready across mobile, tablet, desktop, board, and watch.
+          </p>
+
+          <div class="cta-row">
+            <button class="primary-btn">Launch RAVI</button>
+            <button class="secondary-btn">View Systems</button>
+          </div>
+
+          <div class="stats-row">
+            <div class="stat-box">
+              <span class="stat-label">System</span>
+              <strong>94.8%</strong>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Uptime</span>
+              <strong>24/7</strong>
+            </div>
+            <div class="stat-box">
+              <span class="stat-label">Modes</span>
+              <strong>5 Rooms</strong>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="orb-shell">
+            <div class="orb-ring ring-a"></div>
+            <div class="orb-ring ring-b"></div>
+            <div class="orb-core" aria-label="RAVI holographic core">
+              <div class="core-center">
+                <span>SS</span>
+              </div>
+            </div>
+          </div>
+          <div class="telemetry-box">
+            <div class="telemetry-row">
+              <span>CPU</span>
+              <strong>31%</strong>
+            </div>
+            <div class="telemetry-row">
+              <span>MEM</span>
+              <strong>72%</strong>
+            </div>
+            <div class="telemetry-row">
+              <span>NET</span>
+              <strong>14 ms</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel-grid">
+        <article class="glass panel panel-large">
+          <div class="panel-header">
+            <span>COMMAND CENTER</span>
+            <span class="tiny-tag">LIVE</span>
+          </div>
+          <div class="module-grid">
+            <button class="module-card active">
+              <span class="module-emoji">⚡</span>
+              <span>Quick Deploy</span>
+            </button>
+            <button class="module-card">
+              <span class="module-emoji">🧠</span>
+              <span>AI Core</span>
+            </button>
+            <button class="module-card">
+              <span class="module-emoji">🎧</span>
+              <span>Audio</span>
+            </button>
+            <button class="module-card">
+              <span class="module-emoji">📚</span>
+              <span>Study Hub</span>
+            </button>
+          </div>
+        </article>
+
+        <article class="glass panel panel-small">
+          <div class="panel-header">
+            <span>SYSTEM DIAGNOSTICS</span>
+          </div>
+          <div class="diag-list">
+            <div class="diag-row">
+              <span>Battery</span>
+              <span class="good">Optimal</span>
+            </div>
+            <div class="diag-row">
+              <span>Signal</span>
+              <span class="good">Stable</span>
+            </div>
+            <div class="diag-row">
+              <span>Audio</span>
+              <span class="good">Ready</span>
+            </div>
+          </div>
+        </article>
+      </section>
+
+      <section class="workspace">
+        <div class="glass console-panel">
+          <div class="console-topbar">
+            <div class="console-title">NEURAL CHAT TERMINAL</div>
+            <div class="console-tools">
+              <button class="mini-btn">EN</button>
+              <button class="mini-btn">Beginner</button>
+            </div>
+          </div>
+
+          <div class="chat-window" id="chatWindow" aria-live="polite">
+            <div class="chat-msg system">
+              <span class="role">[RAVI]</span>
+              <span>Shadow Supporter online. Commands ready. Ask me to explain, code, revise, or play.</span>
+            </div>
+          </div>
+
+          <div class="prompt-row">
+            <input id="chatInput" type="text" placeholder="Type a command or ask RAVI..." />
+            <button id="sendBtn" class="primary-btn compact">Send</button>
+          </div>
+        </div>
+
+        <aside class="glass side-panel">
+          <div class="panel-header">
+            <span>HERO COMMANDS</span>
+          </div>
+          <div class="quick-prompts">
+            <button class="prompt-btn">Explain photosynthesis</button>
+            <button class="prompt-btn">Generate Arduino sketch</button>
+            <button class="prompt-btn">Study plan for today</button>
+            <button class="prompt-btn">Play focus music</button>
+          </div>
+        </aside>
+      </section>
+
+      <section class="feature-row">
+        <article class="glass feature-card" id="music">
+          <div class="feature-head">
+            <span>🎵 MUSIC ROOM</span>
+            <span class="tiny-tag">FOCUS</span>
+          </div>
+          <h3>Persistent global player</h3>
+          <ul>
+            <li>Focus, chill, hype, devotional</li>
+            <li>Queue and favorites</li>
+            <li>Smart mood filtering</li>
+          </ul>
+        </article>
+
+        <article class="glass feature-card" id="study">
+          <div class="feature-head">
+            <span>📚 STUDY HUB</span>
+            <span class="tiny-tag">1–13</span>
+          </div>
+          <h3>Grades 1 to 13</h3>
+          <ul>
+            <li>Flashcards with active recall</li>
+            <li>Formula vault and quizzes</li>
+            <li>Daily planner with Room DB</li>
+          </ul>
+        </article>
+
+        <article class="glass feature-card" id="robotics">
+          <div class="feature-head">
+            <span>🤖 ROBOTICS STUDIO</span>
+            <span class="tiny-tag">AI</span>
+          </div>
+          <h3>Arduino + control logic</h3>
+          <ul>
+            <li>Uno, Nano, Mega, ESP32 presets</li>
+            <li>Serial monitor telemetry</li>
+            <li>AI code generator</li>
+          </ul>
+        </article>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
