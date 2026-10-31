@@ -1,7 +1,7 @@
-const langCycle = ["EN", "SI", "SG"];
+const langCycle = ["SI", "EN", "SG"];
 const langLabel = {
-  EN: "English",
   SI: "Sinhala",
+  EN: "English",
   SG: "Singlish"
 };
 
@@ -16,7 +16,7 @@ function appendMessage(role, text) {
 
   const tag = document.createElement("span");
   tag.className = "role";
-  tag.textContent = role === "USER" ? "[YOU]" : "[RAVI]";
+  tag.textContent = role === "USER" ? "[ඔබ]" : "[RAVI]";
 
   const content = document.createElement("span");
   content.textContent = text;
@@ -35,27 +35,27 @@ function processUserInput(value) {
 
   const lower = text.toLowerCase();
 
-  if (lower.includes("photosynthesis")) {
-    appendMessage("RAVI", "Photosynthesis converts carbon dioxide and water into glucose using sunlight, releasing oxygen as a by-product.");
+  if (lower.includes("photosynthesis") || lower.includes("ප්‍රභාසංස්ලේෂනය") || lower.includes("photosynthesis")) {
+    appendMessage("RAVI", "ප්‍රභාසංස්ලේෂනය යනු හරිත ලෝකයේදී CO₂ සහ ජලය විකිරණයෙන් ප්‍රතිසංස්කරණය කර ග්ලූකෝස් නිපදවීමයි. ඔක්සිජන් ද දාර වන්නේ." );
     return;
   }
 
-  if (lower.includes("arduino") || lower.includes("robot")) {
-    appendMessage("RAVI", "I can generate a working Arduino sketch for sensors, LEDs, motors, or ESP32 automation. Give me the exact components and pin layout.");
+  if (lower.includes("arduino") || lower.includes("රොබෝ") || lower.includes("robot") || lower.includes("ආර්ඩුයිනෝ")) {
+    appendMessage("RAVI", "මම ඔබට සම්පූර්ණ Arduino sketch එකක් සකස් කළ හැක. සංරචක, pin layout, සහ අදාළ code ලියන්න මට දියුණු විස්තර දෙන්න.");
     return;
   }
 
-  if (lower.includes("study") || lower.includes("exam") || lower.includes("quiz")) {
-    appendMessage("RAVI", "Let’s build a quick study sprint: 15 minutes for recall, 10 minutes for formulas, 10 minutes for active quiz review. I can make a custom revision plan for Grade 10 or A/L subjects.");
+  if (lower.includes("study") || lower.includes("exam") || lower.includes("quiz") || lower.includes("අධ්‍යාපනය") || lower.includes("ප්‍රශ්න")) {
+    appendMessage("RAVI", "අධ්‍යයන sprint එකක් ගමු: 15 මිනිත්තු recall, 10 මිනිත්තු සූත්‍ර, 10 මිනිත්තු quiz review. ඔබේ ශ්‍රේණිය හා විෂය අනුව මම සැලසුම සකස් කර දෙන්නම්.");
     return;
   }
 
-  if (lower.includes("music") || lower.includes("focus")) {
-    appendMessage("RAVI", "Focus mode is active. I recommend a low-distraction synthwave or instrumental loop with a 25-minute timer and a clean work block.");
+  if (lower.includes("music") || lower.includes("focus") || lower.includes("සංගීත") || lower.includes("නැඹුරු")) {
+    appendMessage("RAVI", "Focus mode සක්‍රීයයි. 25 මිනිතු කාලය සඳහා මෘදු synthwave හෝ උපකාරක ඩ්‍රම් Music එකක් තෝරාගන්න. වැඩේට පමණක් යන්න.");
     return;
   }
 
-  appendMessage("RAVI", `Command received: "${text}". RAVI is syncing your hero system with the right module and preparing the next best action.`);
+  appendMessage("RAVI", `අණය ලැබී ඇත: "${text}". RAVI ඔබේ පද්ධතිය සමඟ සම්බන්ධ වී හොඳම ක්‍රියාමාර්ගය සකස් කරමින් පවතී.`);
 }
 
 sendBtn.addEventListener("click", () => processUserInput(chatInput.value));
@@ -77,8 +77,7 @@ for (const nav of document.querySelectorAll(".nav-pill")) {
     nav.classList.add("active");
 
     const target = nav.dataset.target;
-    const id = target === "home" ? "home" : target;
-    const anchor = document.getElementById(id);
+    const anchor = document.getElementById(target);
     if (anchor) {
       anchor.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -95,17 +94,29 @@ langToggle.addEventListener("click", () => {
   const label = langLabel[next];
   document.title = `Shadow Supporter | ${label} RAVI Core`;
 
-  const systemLabel = document.querySelector(".status-indicator");
-  if (systemLabel) {
-    systemLabel.lastChild.textContent = next === "EN" ? " ONLINE" : ` ${label.toUpperCase()} MODE`;
+  const status = document.querySelector(".status-indicator");
+  if (status) {
+    const textNode = status.lastChild;
+    if (next === "SI") textNode.textContent = " සක්‍රීයයි";
+    else if (next === "EN") textNode.textContent = " ONLINE";
+    else textNode.textContent = " SINGLISH MODE";
   }
 });
 
 const primaryBtn = document.querySelector(".primary-btn");
 if (primaryBtn) {
   primaryBtn.addEventListener("click", () => {
-    const welcome = "RAVI system activated. All hero modules are ready.";
+    const welcome = "RAVI පද්ධතිය සක්‍රීයයි. සියලුම වීර මොඩියුල පවතිනවා.";
     appendMessage("RAVI", welcome);
     chatInput.focus();
   });
+}
+
+if (chatWindow) {
+  appendMessage("RAVI", "Shadow Supporter සක්‍රීයයි. ඔබේ වීර මිතුරා සූදානම්." );
+}
+
+const defaultStatus = document.querySelector(".status-indicator");
+if (defaultStatus) {
+  defaultStatus.lastChild.textContent = " සක්‍රීයයි";
 }
