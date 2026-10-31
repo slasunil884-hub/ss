@@ -68,18 +68,26 @@ fun PersistentMusicBar(
         label = "mw2"
     )
 
-    Row(
+    val currentSec = uiState.currentPositionSeconds
+    val totalSec = uiState.currentTrack.totalSeconds.toFloat().coerceAtLeast(1f)
+    val progressFraction = (currentSec / totalSec).coerceIn(0f, 1f)
+
+    Box(
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(10.dp))
             .background(CyberDarkCard.copy(alpha = 0.95f))
             .border(1.dp, theme.primary.copy(alpha = 0.6f), RoundedCornerShape(10.dp))
             .clickable { viewModel.selectTab(HudTab.MUSIC_ROOM) }
-            .padding(horizontal = 12.dp, vertical = 6.dp)
-            .testTag("persistent_music_bar"),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+            .testTag("persistent_music_bar")
     ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
         // Left: Shadow Supporter Logo & Track info
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -169,4 +177,16 @@ fun PersistentMusicBar(
             }
         }
     }
+
+    // Live Seek Progress Hairline
+    if (progressFraction > 0f) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomStart)
+                .fillMaxWidth(progressFraction)
+                .height(2.dp)
+                .background(theme.primary)
+        )
+    }
+}
 }

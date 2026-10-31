@@ -11,7 +11,17 @@ data class MusicTrack(
     val baseFrequency: Float,
     val isFavorite: Boolean = false,
     val playCount: Int = 0
-)
+) {
+    val totalSeconds: Int
+        get() {
+            val parts = durationText.split(":")
+            return if (parts.size == 2) {
+                val m = parts[0].trim().toIntOrNull() ?: 0
+                val s = parts[1].trim().toIntOrNull() ?: 0
+                (m * 60 + s).coerceAtLeast(1)
+            } else 210
+        }
+}
 
 object StarkMusicDatabase {
     val initialPlaylist = listOf(
@@ -74,6 +84,26 @@ object StarkMusicDatabase {
             baseFrequency = 196f,
             isFavorite = false,
             playCount = 41
+        ),
+        MusicTrack(
+            id = "trk_spider_swing",
+            title = "Spidey Web-Shooter Neon Groove",
+            artist = "Peter Parker & Karen Synth",
+            durationText = "3:15",
+            mood = MusicMood.HYPE,
+            baseFrequency = 261.6f,
+            isFavorite = true,
+            playCount = 28
+        ),
+        MusicTrack(
+            id = "trk_sigiriya_chill",
+            title = "Sigiriya Sky Fortress Ambient Waves",
+            artist = "Shadow Supporter Cyber Ensemble",
+            durationText = "5:10",
+            mood = MusicMood.CHILL,
+            baseFrequency = 185.0f,
+            isFavorite = false,
+            playCount = 16
         )
     )
 }

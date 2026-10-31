@@ -167,19 +167,19 @@ fun MusicRoomTab(
             }
         }
 
-        // Holographic Vinyl Player Card
+        // Holographic Vinyl Disc Banner Card
         CyberPanel(modifier = Modifier.fillMaxWidth()) {
-            Column(
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                    .padding(14.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 // Rotating Holographic Disc with SS Core
                 Box(
                     modifier = Modifier
-                        .size(140.dp)
+                        .size(86.dp)
                         .clip(CircleShape)
                         .background(
                             Brush.radialGradient(
@@ -197,19 +197,19 @@ fun MusicRoomTab(
                     // Grooves
                     Box(
                         modifier = Modifier
-                            .size(105.dp)
+                            .size(64.dp)
                             .border(1.dp, Color(0x3300D2FF), CircleShape)
                     )
                     Box(
                         modifier = Modifier
-                            .size(75.dp)
+                            .size(44.dp)
                             .border(1.dp, Color(0x33FF003D), CircleShape)
                     )
 
                     // Center Label
                     Box(
                         modifier = Modifier
-                            .size(46.dp)
+                            .size(30.dp)
                             .clip(CircleShape)
                             .background(Color(0xFFFFD700))
                             .border(1.dp, Color.Black, CircleShape),
@@ -219,216 +219,41 @@ fun MusicRoomTab(
                             text = "SS",
                             fontFamily = OrbitronFontFamily,
                             fontWeight = FontWeight.Black,
-                            fontSize = 16.sp,
+                            fontSize = 12.sp,
                             color = Color.Black
                         )
                     }
                 }
 
-                // Track Info
-                Text(
-                    text = uiState.currentTrack.title,
-                    fontFamily = OrbitronFontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 13.sp,
-                    color = CyberTextPrimary
-                )
-                Text(
-                    text = "${uiState.currentTrack.artist} • ${uiState.currentTrack.durationText}",
-                    fontSize = 10.sp,
-                    color = CyberTextMuted
-                )
-
-                // Equalizer Visualizer Bars
-                if (uiState.isPlayingMusic) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(5.dp),
-                        verticalAlignment = Alignment.Bottom,
-                        modifier = Modifier.height(28.dp)
-                    ) {
-                        val heights = listOf(wave1, wave2, wave3, wave1 * 0.9f, wave2 * 1.1f, wave3 * 0.8f, wave1 * 0.7f)
-                        heights.forEach { h ->
-                            Box(
-                                modifier = Modifier
-                                    .width(6.dp)
-                                    .height((28.dp * h.coerceIn(0.2f, 1f)))
-                                    .clip(RoundedCornerShape(2.dp))
-                                    .background(theme.secondary)
-                            )
-                        }
-                    }
-                }
-
-                // Controls: Previous, Play/Pause, Next, Favorite
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    IconButton(
-                        onClick = { viewModel.previousTrack() },
-                        modifier = Modifier.size(40.dp).testTag("music_prev_btn")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.SkipPrevious,
-                            contentDescription = "Previous",
-                            tint = theme.secondary,
-                            modifier = Modifier.size(26.dp)
-                        )
-                    }
-
-                    Box(
-                        modifier = Modifier
-                            .size(54.dp)
-                            .clip(CircleShape)
-                            .background(theme.primary)
-                            .clickable { viewModel.togglePlayPause() }
-                            .testTag("music_main_play_btn"),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            imageVector = if (uiState.isPlayingMusic) Icons.Default.Pause else Icons.Default.PlayArrow,
-                            contentDescription = "Play/Pause",
-                            tint = Color.White,
-                            modifier = Modifier.size(30.dp)
-                        )
-                    }
-
-                    IconButton(
-                        onClick = { viewModel.nextTrack() },
-                        modifier = Modifier.size(40.dp).testTag("music_next_btn")
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.SkipNext,
-                            contentDescription = "Next",
-                            tint = theme.secondary,
-                            modifier = Modifier.size(26.dp)
-                        )
-                    }
-
-                    IconButton(
-                        onClick = { viewModel.toggleFavorite(uiState.currentTrack.id) },
-                        modifier = Modifier.size(40.dp).testTag("music_fav_btn")
-                    ) {
-                        Icon(
-                            imageVector = if (uiState.currentTrack.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                            contentDescription = "Favorite",
-                            tint = if (uiState.currentTrack.isFavorite) Color(0xFFFF003D) else CyberTextMuted,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
+                Column(modifier = Modifier.weight(1f)) {
+                    Text(
+                        text = "NEURAL HIFI SYNTHESIZER",
+                        fontFamily = OrbitronFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 10.sp,
+                        color = theme.primary
+                    )
+                    Text(
+                        text = uiState.currentTrack.title,
+                        fontFamily = OrbitronFontFamily,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 12.sp,
+                        color = CyberTextPrimary,
+                        maxLines = 1
+                    )
+                    Text(
+                        text = "${uiState.currentTrack.artist} • ${uiState.currentTrack.durationText}",
+                        fontSize = 10.sp,
+                        color = CyberTextMuted
+                    )
                 }
             }
         }
 
-        // Mood Filter Chips
-        Text(
-            text = "MOOD PLAYLISTS (තත්ත්ව වර්ගීකරණය)",
-            fontFamily = OrbitronFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 11.sp,
-            color = theme.primary
+        // Dedicated Music Player Component: Play/Pause, Seek Bar, and Audio Tracks List
+        MusicPlayerTrackListView(
+            viewModel = viewModel,
+            uiState = uiState
         )
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .horizontalScroll(rememberScrollState()),
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
-        ) {
-            MusicMood.entries.forEach { mood ->
-                val isSelected = mood == uiState.activeMoodFilter
-                NeonButton(
-                    text = mood.label,
-                    onClick = { viewModel.filterMood(mood) },
-                    isActive = isSelected,
-                    accentColor = mood.color,
-                    testTag = "mood_filter_${mood.name}"
-                )
-            }
-        }
-
-        // Playlist Tracks List
-        Text(
-            text = "PLAYLIST (${viewModel.filteredPlaylist().size} TRACKS)",
-            fontFamily = OrbitronFontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 11.sp,
-            color = theme.secondary
-        )
-
-        viewModel.filteredPlaylist().forEach { track ->
-            val isCurrent = track.id == uiState.currentTrack.id
-            CyberPanel(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { viewModel.playTrack(track) }
-            ) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(10.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(10.dp),
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        Icon(
-                            imageVector = if (isCurrent && uiState.isPlayingMusic) Icons.Default.Pause else Icons.Default.PlayArrow,
-                            contentDescription = null,
-                            tint = if (isCurrent) theme.primary else theme.secondary,
-                            modifier = Modifier.size(20.dp)
-                        )
-                        Column {
-                            Text(
-                                text = track.title,
-                                fontFamily = OrbitronFontFamily,
-                                fontWeight = if (isCurrent) FontWeight.Bold else FontWeight.Medium,
-                                fontSize = 11.sp,
-                                color = if (isCurrent) theme.primary else CyberTextPrimary
-                            )
-                            Text(
-                                text = "${track.artist} • ${track.durationText} • ${track.playCount} plays",
-                                fontSize = 9.sp,
-                                color = CyberTextMuted
-                            )
-                        }
-                    }
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(6.dp)
-                    ) {
-                        Box(
-                            modifier = Modifier
-                                .clip(RoundedCornerShape(4.dp))
-                                .background(track.mood.color.copy(alpha = 0.2f))
-                                .padding(horizontal = 6.dp, vertical = 2.dp)
-                        ) {
-                            Text(
-                                text = track.mood.label.uppercase(),
-                                fontFamily = OrbitronFontFamily,
-                                fontSize = 8.sp,
-                                color = track.mood.color
-                            )
-                        }
-
-                        IconButton(
-                            onClick = { viewModel.toggleFavorite(track.id) },
-                            modifier = Modifier.size(24.dp)
-                        ) {
-                            Icon(
-                                imageVector = if (track.isFavorite) Icons.Default.Favorite else Icons.Default.FavoriteBorder,
-                                contentDescription = null,
-                                tint = if (track.isFavorite) Color(0xFFFF003D) else CyberTextMuted,
-                                modifier = Modifier.size(16.dp)
-                            )
-                        }
-                    }
-                }
-            }
-        }
     }
 }

@@ -139,7 +139,7 @@ fun StudyHubTab(
             }
         }
 
-        // Study Hub Sub-Navigation (Daily Planner [Room DB], Notes, Quiz, Groups)
+        // Study Hub Sub-Navigation (Flashcards [Grades 1-13], Daily Planner [Room DB], Notes, Quiz, Groups)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -147,6 +147,7 @@ fun StudyHubTab(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             listOf(
+                Triple("FLASHCARDS", if (isSinhala) "ෆ්ලෑෂ් කාඩ්පත් (1-13)" else "FLASHCARDS (GRADES 1-13)", Icons.Default.AutoAwesome),
                 Triple("PLANNER", if (isSinhala) "දෛනික සැලැස්ම (ROOM DB)" else "DAILY PLANNER (ROOM DB)", Icons.Default.CalendarToday),
                 Triple("NOTES", if (isSinhala) "සටහන් සහ සූත්‍ර" else "NOTES & FORMULAS", Icons.Default.School),
                 Triple("QUIZ", if (isSinhala) "ප්‍රශ්නාවලිය" else "QUIZ CHALLENGE", Icons.Default.CheckCircle),
@@ -162,6 +163,14 @@ fun StudyHubTab(
                     testTag = "study_subtab_$key"
                 )
             }
+        }
+
+        // 0. Grades 1-13 Flashcards Module (Dropdown + Subject Modules + Interactive Studio)
+        if (uiState.activeStudySubTab == "FLASHCARDS") {
+            StudyHubFlashcardsView(
+                viewModel = viewModel,
+                uiState = uiState
+            )
         }
 
         // 1. Daily Planner (Room DB Powered)

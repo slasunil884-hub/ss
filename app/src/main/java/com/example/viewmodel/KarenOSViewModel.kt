@@ -42,6 +42,7 @@ data class ChatMessage(
     val sender: String, // "USER" or "RAVI"
     val text: String,
     val modelBadge: String? = null,
+    val hubTag: String? = null,
     val timestamp: Long = System.currentTimeMillis()
 )
 
@@ -106,6 +107,7 @@ data class KarenOsUiState(
     val playlist: List<MusicTrack> = StarkMusicDatabase.initialPlaylist,
     val currentTrack: MusicTrack = StarkMusicDatabase.initialPlaylist.first(),
     val isPlayingMusic: Boolean = false,
+    val currentPositionSeconds: Float = 0f,
     val activeMoodFilter: MusicMood = MusicMood.ALL,
     val isFavoriteOnly: Boolean = false
 )
@@ -119,6 +121,7 @@ class KarenOSViewModel(application: Application) : AndroidViewModel(application)
     private val aiService = AiService()
     private var ttsEngine: TextToSpeech? = null
     private var timerJob: Job? = null
+    private var musicPlaybackJob: Job? = null
     private val vibrator = application.getSystemService(Vibrator::class.java)
 
     private val plannerDb = AppDatabase.getInstance(application)
@@ -221,6 +224,7 @@ class KarenOSViewModel(application: Application) : AndroidViewModel(application)
     // --- Music Player (Shadow Supporter SS) ---
     fun playTrack(track: MusicTrack) {
         audioSynth.startSynthTrack(track.title, track.baseFrequency)
+        val isNewTrack = _uiState.value.currentTrack.id != track.id
         val updatedPlaylist = _uiState.value.playlist.map {
             if (it.id == track.id) it.copy(playCount = it.playCount + 1) else it
         }
@@ -228,14 +232,41 @@ class KarenOSViewModel(application: Application) : AndroidViewModel(application)
             it.copy(
                 currentTrack = track,
                 isPlayingMusic = true,
+                currentPositionSeconds = if (isNewTrack) 0f else it.currentPositionSeconds,
                 playlist = updatedPlaylist
             )
         }
+        startPlaybackTicker()
+    }
+
+    private fun startPlaybackTicker() {
+        musicPlaybackJob?.cancel()
+        musicPlaybackJob = viewModelScope.launch {
+            while (isActive && _uiState.value.isPlayingMusic) {
+                delay(1000L)
+                val cur = _uiState.value.currentPositionSeconds
+                val max = _uiState.value.currentTrack.totalSeconds.toFloat().coerceAtLeast(1f)
+                if (cur + 1f >= max) {
+                    _uiState.update { it.copy(currentPositionSeconds = 0f) }
+                    nextTrack()
+                } else {
+                    _uiState.update { it.copy(currentPositionSeconds = cur + 1f) }
+                }
+            }
+        }
+    }
+
+    fun seekToPosition(seconds: Float) {
+        val trackMax = _uiState.value.currentTrack.totalSeconds.toFloat().coerceAtLeast(1f)
+        val clamped = seconds.coerceIn(0f, trackMax)
+        _uiState.update { it.copy(currentPositionSeconds = clamped) }
+        audioSynth.playBeep(440f + (clamped / trackMax) * 180f, 30, 0.05f)
     }
 
     fun togglePlayPause() {
         if (_uiState.value.isPlayingMusic) {
             audioSynth.stopSynthMusic()
+            musicPlaybackJob?.cancel()
             _uiState.update { it.copy(isPlayingMusic = false) }
         } else {
             playTrack(_uiState.value.currentTrack)
@@ -247,6 +278,7 @@ class KarenOSViewModel(application: Application) : AndroidViewModel(application)
         val currentIndex = list.indexOfFirst { it.id == _uiState.value.currentTrack.id }
         val nextIndex = if (currentIndex != -1 && currentIndex + 1 < list.size) currentIndex + 1 else 0
         val next = list.getOrNull(nextIndex) ?: _uiState.value.currentTrack
+        _uiState.update { it.copy(currentPositionSeconds = 0f) }
         playTrack(next)
     }
 
@@ -255,6 +287,7 @@ class KarenOSViewModel(application: Application) : AndroidViewModel(application)
         val currentIndex = list.indexOfFirst { it.id == _uiState.value.currentTrack.id }
         val prevIndex = if (currentIndex > 0) currentIndex - 1 else list.size - 1
         val prev = list.getOrNull(prevIndex) ?: _uiState.value.currentTrack
+        _uiState.update { it.copy(currentPositionSeconds = 0f) }
         playTrack(prev)
     }
 
@@ -494,11 +527,36 @@ class KarenOSViewModel(application: Application) : AndroidViewModel(application)
         _uiState.update { it.copy(selectedAiModel = modelType) }
     }
 
-    fun sendAiPrompt(prompt: String, forcedModel: AiModelType? = null) {
+    fun clearChatHistory() {
+        audioSynth.playBeep(360f, 60, 0.08f)
+        _uiState.update {
+            it.copy(
+                chatMessages = listOf(
+                    ChatMessage(
+                        sender = "RAVI",
+                        text = "Terminal cleared. Shadow Supporter (SS) assistant standing by across all hubs. How can I assist you, Hero? / විමසුම් පුවරුව පිරිසිදු කරන ලදී. සියලු මධ්‍යස්ථාන සඳහා රවී සූදානම්.",
+                        modelBadge = "SS CORE"
+                    )
+                ),
+                currentAiStreamText = "",
+                aiError = null
+            )
+        }
+    }
+
+    fun sendAiPrompt(
+        prompt: String,
+        forcedModel: AiModelType? = null,
+        hubContext: String? = null
+    ) {
         if (prompt.isBlank()) return
         val modelToUse = forcedModel ?: _uiState.value.selectedAiModel
 
-        val userMsg = ChatMessage(sender = "USER", text = prompt)
+        val userMsg = ChatMessage(
+            sender = "USER",
+            text = prompt,
+            hubTag = hubContext
+        )
         _uiState.update {
             it.copy(
                 chatMessages = it.chatMessages + userMsg,
@@ -512,8 +570,18 @@ class KarenOSViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             val accumulated = StringBuilder()
             try {
+                val contextualPrompt = if (hubContext != null) {
+                    when (hubContext) {
+                        "STUDY_HUB" -> "[CROSS-HUB CONTEXT: Study Hub (Grades 1-13) | Current Subject: ${_uiState.value.activeSubject.name} (${_uiState.value.activeSubject.gradeRange})]\n$prompt"
+                        "ARDUINO_STUDIO" -> "[CROSS-HUB CONTEXT: Arduino Studio & Robotics Lab | Active Project: ${_uiState.value.activeArduinoProject.title} (${_uiState.value.activeArduinoProject.board})]\n$prompt"
+                        "MUSIC_ROOM" -> "[CROSS-HUB CONTEXT: Shadow Supporter Music Room | Active Track: ${_uiState.value.currentTrack.title} (${_uiState.value.currentTrack.mood.label}, ${_uiState.value.currentTrack.baseFrequency}Hz)]\n$prompt"
+                        "COMMAND_CENTER" -> "[CROSS-HUB CONTEXT: Command Center & Suit Telemetry | Multi-device systems active]\n$prompt"
+                        else -> prompt
+                    }
+                } else prompt
+
                 aiService.generateStream(
-                    prompt = prompt,
+                    prompt = contextualPrompt,
                     modelType = modelToUse,
                     languageMode = _uiState.value.languageMode,
                     depth = _uiState.value.answerDepth
@@ -528,7 +596,8 @@ class KarenOSViewModel(application: Application) : AndroidViewModel(application)
                     val aiMsg = ChatMessage(
                         sender = "RAVI",
                         text = fullResponse,
-                        modelBadge = modelToUse.badge
+                        modelBadge = modelToUse.badge,
+                        hubTag = hubContext
                     )
                     _uiState.update {
                         it.copy(
@@ -624,6 +693,7 @@ class KarenOSViewModel(application: Application) : AndroidViewModel(application)
 
     override fun onCleared() {
         super.onCleared()
+        musicPlaybackJob?.cancel()
         audioSynth.stopSynthMusic()
         ttsEngine?.stop()
         ttsEngine?.shutdown()

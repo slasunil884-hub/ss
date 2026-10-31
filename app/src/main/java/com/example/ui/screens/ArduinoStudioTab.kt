@@ -295,6 +295,12 @@ fun ArduinoStudioTab(
             }
         }
 
+        // Simulated Serial Monitor & Code Snippets Module
+        ArduinoSerialMonitorSnippetView(
+            activeProject = project,
+            viewModel = viewModel
+        )
+
         // AI Custom Sketch Generator Card
         CyberPanel(modifier = Modifier.fillMaxWidth()) {
             Column(
